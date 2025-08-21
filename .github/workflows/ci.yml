@@ -30,7 +30,6 @@ jobs:
         with: 
           repository: hainm112123/Automation-Testing
           ref: dev
-          path: automation-testing
           token: ${{ secrets.GHP }}
       - uses: actions/setup-python@v5
         with:
