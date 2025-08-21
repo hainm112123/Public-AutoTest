@@ -46,30 +46,30 @@ jobs:
           REPORT: performance-reports-${{join(matrix.runner, '-')}}
 
   # ..................................................stability test.......................................................
-  # stability:
-  #   runs-on: ${{matrix.runner}}
-  #   strategy:
-  #     matrix:
-  #       runner:
-  #         - [ubuntu-latest]
-  #         - [windows-latest]
-  #         - [macos-latest]
-  #         # - [self-hosted, Linux]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version: '3.13'   
-  #     - run: |
-  #         pip install -r requirements.txt  
-  #         playwright install --with-deps
+  stability:
+    runs-on: ${{matrix.runner}}
+    strategy:
+      matrix:
+        runner:
+          - [ubuntu-latest]
+          - [windows-latest]
+          - [macos-latest]
+          # - [self-hosted, Linux]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'   
+      - run: |
+          pip install -r requirements.txt  
+          playwright install --with-deps
 
-  #     - run: python tests/stability.py
+      - run: python tests/stability.py
 
-  #     - uses: ./.github/actions/report
-  #       with:
-  #         LOG: stability-logs-${{join(matrix.runner, '-')}}
-  #         REPORT: stability-reports-${{join(matrix.runner, '-')}}
+      - uses: ./.github/actions/report
+        with:
+          LOG: stability-logs-${{join(matrix.runner, '-')}}
+          REPORT: stability-reports-${{join(matrix.runner, '-')}}
 
   # ..................................................correctness test.......................................................
   # correctness:
@@ -89,34 +89,34 @@ jobs:
   #         LOG: correctness-logs-${{runner.os}}-${{runner.environment}}-${{runner.name}}
   #         REPORT: correctness-reports-${{runner.os}}-${{runner.environment}}-${{runner.name}}
   
-  # fault-injection:
-  #   runs-on: ${{matrix.runner}}
-  #   strategy:
-  #     matrix:
-  #       runner:
-  #         - [ubuntu-latest]
-  #         - [windows-latest]
-  #         - [macos-latest]
-  #         # - [self-hosted, Linux]
+  fault-injection:
+    runs-on: ${{matrix.runner}}
+    strategy:
+      matrix:
+        runner:
+          - [ubuntu-latest]
+          - [windows-latest]
+          - [macos-latest]
+          # - [self-hosted, Linux]
  
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version: '3.13'   
-  #     - run: pip install -r requirements.txt
-  #     - if: runner.os == 'Linux' 
-  #       run: |
-  #         sudo apt update
-  #         sudo apt install -y stress-ng
-  #     - if: runner.os == 'Windows'
-  #       uses: ./.github/actions/setup-win-stress
-  #     - if: runner.os == 'macOS' 
-  #       run: brew install stress-ng
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'   
+      - run: pip install -r requirements.txt
+      - if: runner.os == 'Linux' 
+        run: |
+          sudo apt update
+          sudo apt install -y stress-ng
+      - if: runner.os == 'Windows'
+        uses: ./.github/actions/setup-win-stress
+      - if: runner.os == 'macOS' 
+        run: brew install stress-ng
       
-  #     - run: python tests/fault.py
+      - run: python tests/fault.py
       
-  #     - uses: ./.github/actions/report
-  #       with:
-  #         LOG: fault-logs-${{join(matrix.runner, '-')}}
-  #         REPORT: fault-reports-${{join(matrix.runner, '-')}}
+      - uses: ./.github/actions/report
+        with:
+          LOG: fault-logs-${{join(matrix.runner, '-')}}
+          REPORT: fault-reports-${{join(matrix.runner, '-')}}
