@@ -57,6 +57,10 @@ jobs:
           # - [self-hosted, Linux]
     steps:
       - uses: actions/checkout@v4
+        with: 
+          repository: hainm112123/Automation-Testing
+          ref: dev
+          token: ${{ secrets.GHP }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'   
@@ -101,6 +105,10 @@ jobs:
  
     steps:
       - uses: actions/checkout@v4
+        with: 
+          repository: hainm112123/Automation-Testing
+          ref: dev
+          token: ${{ secrets.GHP }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'   
