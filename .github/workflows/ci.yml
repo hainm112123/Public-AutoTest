@@ -128,3 +128,31 @@ jobs:
         with:
           LOG: fault-logs-${{join(matrix.runner, '-')}}
           REPORT: fault-reports-${{join(matrix.runner, '-')}}
+  # ..................................................idle test.......................................................
+  idle:
+    runs-on: ${{matrix.runner}}
+    strategy:
+      matrix:
+        runner:
+          - [ubuntu-latest]
+          - [windows-latest]
+          - [macos-latest]
+          # - [self-hosted, Linux]
+ 
+    steps:
+      - uses: actions/checkout@v4
+        with: 
+          repository: hainm112123/Automation-Testing
+          ref: dev
+          token: ${{ secrets.GHP }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'   
+      - run: pip install -r requirements.txt
+      
+      - run: python tests/idle.py
+      
+      - uses: ./.github/actions/report
+        with:
+          LOG: idle-logs-${{join(matrix.runner, '-')}}
+          REPORT: idle-reports-${{join(matrix.runner, '-')}}
