@@ -42,6 +42,7 @@ jobs:
       - run: python tests/performance.py
       
       - uses: ./.github/actions/report
+        if: always()
         with:
           LOG: performance-logs-${{join(matrix.runner, '-')}}
           REPORT: performance-reports-${{join(matrix.runner, '-')}}
@@ -73,6 +74,7 @@ jobs:
       - run: python tests/stability.py
 
       - uses: ./.github/actions/report
+        if: always()
         with:
           LOG: stability-logs-${{join(matrix.runner, '-')}}
           REPORT: stability-reports-${{join(matrix.runner, '-')}}
@@ -128,6 +130,7 @@ jobs:
       - run: python tests/fault.py
       
       - uses: ./.github/actions/report
+        if: always()
         with:
           LOG: fault-logs-${{join(matrix.runner, '-')}}
           REPORT: fault-reports-${{join(matrix.runner, '-')}}
@@ -157,6 +160,7 @@ jobs:
       - run: python tests/idle.py
       
       - uses: ./.github/actions/report
+        if: always()
         with:
           LOG: idle-logs-${{join(matrix.runner, '-')}}
           REPORT: idle-reports-${{join(matrix.runner, '-')}}
