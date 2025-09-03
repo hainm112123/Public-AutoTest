@@ -39,7 +39,7 @@ jobs:
           pip install -r requirements.txt  
           playwright install --with-deps
       
-      - run: python tests/performance.py
+      - run: python tests/runners/performance.py
       
       - uses: ./.github/actions/report
         if: always()
@@ -70,7 +70,7 @@ jobs:
           pip install -r requirements.txt  
           playwright install --with-deps
 
-      - run: python tests/stability.py
+      - run: python tests/runners/stability.py
 
       - uses: ./.github/actions/report
         if: always()
@@ -109,7 +109,7 @@ jobs:
       - if: runner.os == 'macOS' 
         run: brew install stress-ng
       
-      - run: python tests/fault.py
+      - run: python tests/runners/fault.py
       
       - uses: ./.github/actions/report
         if: always()
@@ -138,7 +138,7 @@ jobs:
           python-version: '3.13'   
       - run: pip install -r requirements.txt
       
-      - run: python tests/idle.py
+      - run: python tests/runners/idle.py
       
       - uses: ./.github/actions/report
         if: always()
