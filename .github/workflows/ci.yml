@@ -20,11 +20,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - [ubuntu-latest]
-          - [windows-latest]
-          - [macos-latest]
-          # - [self-hosted, Linux]
+        runner: [
+          ubuntu-latest, 
+          windows-latest, 
+          macos-latest,
+        ]
  
     steps:
       - uses: actions/checkout@v4
@@ -32,19 +32,25 @@ jobs:
           repository: hainm112123/Automation-Testing
           ref: dev
           token: ${{ secrets.GHP }}
-      - uses: actions/setup-python@v5
+      - uses: ./.github/actions/setup-python
         with:
-          python-version: '3.13'   
-      - run: |
-          pip install -r requirements.txt  
-          playwright install --with-deps
+          NAME: ${{matrix.runner}}     
+          OS: ${{runner.os}} 
       
-      - run: python tests/runners/performance.py
+      - if: ${{!startsWith(matrix.runner, 'ubi')}}
+        run: playwright install --with-deps
+      - if: ${{startsWith(matrix.runner, 'ubi')}}
+        run: playwright install
+      
+      - uses: ./.github/actions/run-test
+        with:
+          NAME: ${{matrix.runner}} 
+          TEST: performance
       
       - uses: ./.github/actions/report
         if: always()
         with:
-          NAME: performance-${{join(matrix.runner, '-')}}
+          NAME: performance-${{matrix.runner}}
 
   # ..................................................stability test.......................................................
   stability:
@@ -52,30 +58,36 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - [ubuntu-latest]
-          - [windows-latest]
-          - [macos-latest]
-          # - [self-hosted, Linux]
+        runner: [
+          ubuntu-latest, 
+          windows-latest, 
+          macos-latest,
+        ]
     steps:
       - uses: actions/checkout@v4
         with: 
           repository: hainm112123/Automation-Testing
           ref: dev
           token: ${{ secrets.GHP }}
-      - uses: actions/setup-python@v5
+      - uses: ./.github/actions/setup-python
         with:
-          python-version: '3.13'   
-      - run: |
-          pip install -r requirements.txt  
-          playwright install --with-deps
+          NAME: ${{matrix.runner}}     
+          OS: ${{runner.os}}  
 
-      - run: python tests/runners/stability.py
+      - if: ${{!startsWith(matrix.runner, 'ubi')}}
+        run: playwright install --with-deps
+      - if: ${{startsWith(matrix.runner, 'ubi')}}
+        run: playwright install
+
+      - uses: ./.github/actions/run-test
+        with:
+          NAME: ${{matrix.runner}} 
+          TEST: stability
 
       - uses: ./.github/actions/report
         if: always()
         with:
-          NAME: stability-${{join(matrix.runner, '-')}}
+          NAME: stability-${{matrix.runner}}
 
   # ..................................................faul injection test.......................................................
   
@@ -84,11 +96,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - [ubuntu-latest]
-          - [windows-latest]
-          - [macos-latest]
-          # - [self-hosted, Linux]
+        runner: [
+          ubuntu-latest, 
+          windows-latest, 
+          macos-latest,
+        ]
  
     steps:
       - uses: actions/checkout@v4
@@ -96,36 +108,44 @@ jobs:
           repository: hainm112123/Automation-Testing
           ref: dev
           token: ${{ secrets.GHP }}
-      - uses: actions/setup-python@v5
+      - uses: ./.github/actions/setup-python
         with:
-          python-version: '3.13'   
-      - run: pip install -r requirements.txt
-      - if: runner.os == 'Linux' 
+          NAME: ${{matrix.runner}}
+          OS: ${{runner.os}}   
+
+      - if: ${{runner.os == 'Linux' && !startsWith(matrix.runner, 'ubi')}}
         run: |
           sudo apt update
           sudo apt install -y stress-ng
+      - if: ${{startsWith(matrix.runner, 'ubi')}}
+        run: |
+          sudo dnf makecache
+          sudo dnf install -y --nogpgcheck stress-ng
       - if: runner.os == 'Windows'
         uses: ./.github/actions/setup-win-stress
       - if: runner.os == 'macOS' 
         run: brew install stress-ng
       
-      - run: python tests/runners/fault.py
+      - uses: ./.github/actions/run-test
+        with:
+          NAME: ${{matrix.runner}} 
+          TEST: fault
       
       - uses: ./.github/actions/report
         if: always()
         with:
-          NAME: fault-${{join(matrix.runner, '-')}}
+          NAME: fault-${{matrix.runner}}
   # ..................................................idle test.......................................................
   idle:
     runs-on: ${{matrix.runner}}
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - [ubuntu-latest]
-          - [windows-latest]
-          - [macos-latest]
-          # - [self-hosted, Linux]
+        runner: [
+          ubuntu-latest, 
+          windows-latest, 
+          macos-latest,
+        ]
  
     steps:
       - uses: actions/checkout@v4
@@ -133,14 +153,17 @@ jobs:
           repository: hainm112123/Automation-Testing
           ref: dev
           token: ${{ secrets.GHP }}
-      - uses: actions/setup-python@v5
+      - uses: ./.github/actions/setup-python
         with:
-          python-version: '3.13'   
-      - run: pip install -r requirements.txt
+          NAME: ${{matrix.runner}}
+          OS: ${{runner.os}}
       
-      - run: python tests/runners/idle.py
+      - uses: ./.github/actions/run-test
+        with:
+          NAME: ${{matrix.runner}} 
+          TEST: idle
       
       - uses: ./.github/actions/report
         if: always()
         with:
-          NAME: idle-${{join(matrix.runner, '-')}}
+          NAME: idle-${{matrix.runner}}
